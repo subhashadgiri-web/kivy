@@ -1,0 +1,57 @@
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+import pygame
+
+class MusicApp(App):
+    def build(self):
+        self.playing = False
+        self.music_file = "music.mp3"  # 🔸 Put your MP3 file name here
+
+        # Initialize pygame mixer
+        pygame.mixer.init()
+
+        # Layout
+        layout = BoxLayout(orientation='vertical', padding=30, spacing=20)
+
+        # Label
+        self.label = Label(text="MP3 Player", font_size=28)
+        layout.add_widget(self.label)
+
+        # Play button
+        play_btn = Button(text="▶️ Play", font_size=24, background_color=(0, 1, 0, 1))
+        play_btn.bind(on_press=self.play_music)
+        layout.add_widget(play_btn)
+
+        # Pause button
+        pause_btn = Button(text="⏸ Pause", font_size=24, background_color=(1, 1, 0, 1))
+        pause_btn.bind(on_press=self.pause_music)
+        layout.add_widget(pause_btn)
+
+        # Stop button
+        stop_btn = Button(text="⏹ Stop", font_size=24, background_color=(1, 0, 0, 1))
+        stop_btn.bind(on_press=self.stop_music)
+        layout.add_widget(stop_btn)
+
+        return layout
+
+    def play_music(self, instance):
+        if not self.playing:
+            pygame.mixer.music.load(self.music_file)
+            pygame.mixer.music.play()
+            self.label.text = f"Playing: {self.music_file}"
+            self.playing = True
+
+    def pause_music(self, instance):
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.pause()
+            self.label.text = "Paused"
+
+    def stop_music(self, instance):
+        pygame.mixer.music.stop()
+        self.label.text = "Stopped"
+        self.playing = False
+
+if __name__ == '__main__':
+    MusicApp().run()
